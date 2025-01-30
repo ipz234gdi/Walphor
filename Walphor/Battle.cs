@@ -478,7 +478,7 @@ namespace Walphor
                 int delay = rand.Next(1000, 5001); // Випадкова затримка від 1 до 5 секунд
                 await Task.Delay(delay);
 
-                int action = npcBrain.ComputeAction(npc_battle.Level);
+                int action = npcBrain.ComputeAction(npc_battle.Level, npc_battle.Atck, npc_battle.Health);
                 switch (action)
                 {
                     case 0:
