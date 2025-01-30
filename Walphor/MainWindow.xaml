@@ -1,0 +1,13 @@
+﻿<Window x:Class="Walphor.GameEngine"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        mc:Ignorable="d"
+        Title="Таверна Нескiнченних Битв" SizeToContent="WidthAndHeight" Icon="/Photoshop_hFApR1iHFZ.png" ResizeMode="NoResize">
+    <Grid x:Name="gridGame">
+        <Canvas x:Name="canvasGame" Width="1280" Height="720"/>
+
+
+    </Grid>
+</Window>

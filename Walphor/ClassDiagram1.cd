@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Walphor.Battle">
+    <Position X="23" Y="8.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>BAAdEYQEABBIAJIAADCCEkScEAA8cAEckRQASABCBgI=</HashCode>
+      <FileName>Battle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.ButtonManager">
+    <Position X="0.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAQAgAAAAAAAAAAAAAAAAAEEAAAAAAAAAAgA=</HashCode>
+      <FileName>ButtonManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.Card">
+    <Position X="7.5" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIKAAAAQAAAACAAAYBEFRAAAAEAUAAICEAAAAAABA=</HashCode>
+      <FileName>Card.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.Character">
+    <Position X="9.75" Y="5.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAYCAAAgKEAiBCAAEgEEwYAAAIAIWABAAAgAAAAAFA=</HashCode>
+      <FileName>Character.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.CollisionManager">
+    <Position X="22.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQQACAAAAAAAAAAAAAgACAAAAAACAAAEACAQAAAA=</HashCode>
+      <FileName>CollisionManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.DialogManager">
+    <Position X="17.75" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAYBhAAAEIwAQAIADCACEBAAAAAoAAQgYghAABAAgA=</HashCode>
+      <FileName>DialogManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.Fishing">
+    <Position X="19.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAQAAAAAABAEEAAAFgAQgAAAAIQMSEAAgYSAAACgBI=</HashCode>
+      <FileName>Fishing.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.GameObject">
+    <Position X="6.25" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAFCAAAAAAAAEAAEASmAAAAgAAEAAAAAAAYBA=</HashCode>
+      <FileName>GameObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.ItemManager">
+    <Position X="12" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAKAAAAAAAAAIAAAAAAAAAkAAAAAAAAAAABA=</HashCode>
+      <FileName>ItemManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.GameEngine" BaseTypeListCollapsed="true">
+    <Position X="14.25" Y="8.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>XIEEUggACoQIgWggJRCUSggMQE5JoMGBnI4tggAQAgU=</HashCode>
+      <FileName>MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Walphor.Map">
+    <Position X="19.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIAAAAAAAAAAAAACEAAAAgAAAAAAAAAAYAA=</HashCode>
+      <FileName>Map.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.Menu">
+    <Position X="21.25" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAYAAAAAAAAAAAAABCAQgCAAABAAAEBAAAAAIQCAAA=</HashCode>
+      <FileName>Menu.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.NPC">
+    <Position X="5" Y="5.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAACAAAgIEAiADAAAAJEgYAAAIAAGABAAAAAAAAAJA=</HashCode>
+      <FileName>NPC.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.NPCBrain">
+    <Position X="22.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAQAAAAAAAA=</HashCode>
+      <FileName>NPCBrain.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.SaveGame">
+    <Position X="19.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAgICAAAAAAAAQBAAABAAAQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SaveGame.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.Shop">
+    <Position X="16" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAwggAAAAAEFAAAABAAAgAAABCCBQEiAgJACUQCABE=</HashCode>
+      <FileName>Shop.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.SoundManager">
+    <Position X="21" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAARQAAkCCAAAABBAABEAAAABIAEAAQACQAQAgAAEEA=</HashCode>
+      <FileName>SoundManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.UICreator">
+    <Position X="15.5" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>EAFEQWAMACFECIIBBICQAIBAUSoBEYDAkQCAAAJCAAA=</HashCode>
+      <FileName>UICreator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.UIManager">
+    <Position X="13.75" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>QAG4ADAEAACBEACAABigAAiCQJJFIAgQCwoCAAQAEQA=</HashCode>
+      <FileName>UIManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Walphor.Wall">
+    <Position X="2.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgCAAAAAIAAAAAAAAAAACAAAAAAAgAAAAgAAAAAABA=</HashCode>
+      <FileName>Wall.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
