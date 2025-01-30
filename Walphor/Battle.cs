@@ -21,46 +21,74 @@ namespace Walphor
 {
     internal class Battle
     {
-        
-        private NPCBrain npcBrain = new NPCBrain();
-        private Random rand = new Random();
-        private GameEngine gameEngine;
-        private SoundManager soundManager;
-        public Canvas canvasBattle;
-        private Grid gridGame;
-        private Shop shop;
-        private bool isVisible = false;
-        private TextBlock timerDisplay;
-        private TextBlock turnDisplay;
-        private List<TextBlock> bonusStatBlocks = new List<TextBlock>();
-        private Dictionary<string, Image> images = new Dictionary<string, Image>();
-        private bool playerisDefending = false;
-        private bool npcisDefending = false;
-        double Running = 15;
-        double Defing = 50;
-        private bool inic = false;
-        private Character player_battle;
-        private Character player_battle_org;
-        private NPC npc_battle;
-
-        private DispatcherTimer turnTimer;
-        private int timeLeft = 15;
-        bool isPlayerTurn = true;
-
         private double Bonus_Atck = 0;
         private double Bonus_Def = 0;
         private double Bonus_Run = 0;
 
-        private ButtonManager button1;
-        private ButtonManager button2;
-        private ButtonManager button3;
-
+        private NPCBrain npcBrain = new NPCBrain();
+        private Random rand = new Random();
+        private GameEngine gameEngine;
+        private SoundManager soundManager;
         private UIManager uiManager;
+        private Shop shop;
+
+        private Canvas canvasBattle;
+        private Grid gridGame;
+
+        private readonly Character originalPlayerCharacter;
+        private Character playerCharacter;
+        private NPC npc_battle;
+
+        private Dictionary<string, Image> _images = new Dictionary<string, Image>();
+        private List<TextBlock> bonusStatBlocks = new List<TextBlock>();
+
+        private DispatcherTimer turnTimer;
+        private int timeLeft = 15;
+        private bool isPlayerTurn = true;
+        private bool isVisible = false;
+        private bool inic = false;
+
+        private Dictionary<string, Image> images = new Dictionary<string, Image>();
+
+        private const double RunningChance = 15;
+        private const double DefendingBonus = 50;
+
+        private TextBlock timerDisplay;
+        private TextBlock turnDisplay;
+        private ButtonManager attackButton;
+        private ButtonManager defendButton;
+        private ButtonManager runAwayButton;
+
+        private bool isPlayerDefending = false;
+        private bool isNpcDefending = false;
+
+        private readonly string[] attackAnimationPaths = new string[]
+        {
+            "pack://application:,,,/Data/Battle/animation/F_1.png",
+            "pack://application:,,,/Data/Battle/animation/F_2.png",
+            "pack://application:,,,/Data/Battle/animation/F_3.png",
+            "pack://application:,,,/Data/Battle/animation/F_4.png",
+            "pack://application:,,,/Data/Battle/animation/F_5.png",
+            "pack://application:,,,/Data/Battle/animation/F_6.png",
+            "pack://application:,,,/Data/Battle/animation/F_7.png",
+            "pack://application:,,,/Data/Battle/animation/F_8.png"
+        };
+        private readonly string[] defendAnimationPaths = new string[]
+        {
+            "pack://application:,,,/Data/Battle/animation_Def/FD_1.png",
+            "pack://application:,,,/Data/Battle/animation_Def/FD_2.png",
+            "pack://application:,,,/Data/Battle/animation_Def/FD_3.png",
+            "pack://application:,,,/Data/Battle/animation_Def/FD_4.png",
+            "pack://application:,,,/Data/Battle/animation_Def/FD_5.png",
+            "pack://application:,,,/Data/Battle/animation_Def/FD_6.png",
+            "pack://application:,,,/Data/Battle/animation_Def/FD_7.png",
+            "pack://application:,,,/Data/Battle/animation_Def/FD_8.png"
+        };
         public Battle(Grid gridGame, Character character, NPC npc, UIManager uIManager, GameEngine gameEngine, Shop shop, SoundManager soundManager)
         {
             this.gridGame = gridGame;
-            this.player_battle_org = character;
-            player_battle = character;
+            this.originalPlayerCharacter = character;
+            playerCharacter = character;
             this.npc_battle = npc;
             this.gameEngine = gameEngine;
             this.uiManager = uIManager;
@@ -94,20 +122,20 @@ namespace Walphor
 
             AddImage("pack://application:,,,/Data/Battle_background.png", 0, 0, 1280, 720);
 
-            button1 = ButtonManager.Create(20, 480, 204, 68, "pack://application:,,,/Data/Button/Attack.png", canvasBattle);
-            button1.Tag = "Attack";
-            button1.Click += Button1_Click;
-            AddTextNextToButton("Attack", 20 + 204 + 10, 492, player_battle.Atck, "", canvasBattle);
+            attackButton = ButtonManager.Create(20, 480, 204, 68, "pack://application:,,,/Data/Button/Attack.png", canvasBattle);
+            attackButton.Tag = "Attack";
+            attackButton.Click += OnAttackButtonClick;
+            AddTextNextToButton("Attack", 20 + 204 + 10, 492, playerCharacter.Atck, "", canvasBattle);
 
-            button2 = ButtonManager.Create(20, 560, 204, 68, "pack://application:,,,/Data/Button/Defens.png", canvasBattle);
-            button2.Tag = "Defend";
-            button2.Click += Button2_Click;
-            AddTextNextToButton("Defend", 20 + 204 + 10, 572, Defing, "%", canvasBattle);
+            defendButton = ButtonManager.Create(20, 560, 204, 68, "pack://application:,,,/Data/Button/Defens.png", canvasBattle);
+            defendButton.Tag = "Defend";
+            defendButton.Click += OnDefendButtonClick;
+            AddTextNextToButton("Defend", 20 + 204 + 10, 572, DefendingBonus, "%", canvasBattle);
 
-            button3 = ButtonManager.Create(20, 640, 204, 68, "pack://application:,,,/Data/Button/Run_away.png", canvasBattle);
-            button3.Tag = "Run_away";
-            button3.Click += Button3_Click;
-            AddTextNextToButton("Run", 20 + 204 + 10, 652, Running, "%", canvasBattle);
+            runAwayButton = ButtonManager.Create(20, 640, 204, 68, "pack://application:,,,/Data/Button/Run_away.png", canvasBattle);
+            runAwayButton.Tag = "Run_away";
+            runAwayButton.Click += OnRunAwayButtonClick;
+            AddTextNextToButton("Run", 20 + 204 + 10, 652, RunningChance, "%", canvasBattle);
 
             AddImage("pack://application:,,,/Data/Cards/Demo_card.png", 600, 488, 128, 212);
             AddImage("pack://application:,,,/Data/Cards/Demo_card.png", 740, 488, 128, 212);
@@ -142,68 +170,68 @@ namespace Walphor
             SetupTurnTimer();
         }
 
-        private void Button1_Click(object sender, RoutedEventArgs e)
+        private void OnAttackButtonClick(object sender, RoutedEventArgs e)
         {
             if (!isPlayerTurn) return;
             soundManager.PlayClickSound(gameEngine.GetSoundPath("klik.mp3"));
 
-            button1.SetImageSource("pack://application:,,,/Data/Button/Attack_1.png");
+            attackButton.SetImageSource("pack://application:,,,/Data/Button/Attack_1.png");
             Debug.WriteLine("tetetetettete");
             Task.Delay(200).ContinueWith(t =>
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    button1.SetImageSource("pack://application:,,,/Data/Button/Attack.png");
+                    attackButton.SetImageSource("pack://application:,,,/Data/Button/Attack.png");
                 });
             });
 
-            if (npcisDefending && rand.NextDouble() < (Defing - (player_battle.Algo / 2) / 100))
+            if (isNpcDefending && rand.NextDouble() < (DefendingBonus - (playerCharacter.Algo / 2) / 100))
             {
                 Debug.WriteLine("Оборона нпс успiшна!");
                 StartTransitionAnimation_Def("NPC");
-                npc_battle.Def -= player_battle.Atck + Bonus_Atck + (player_battle.Algo / 2);
-                if (npc_battle.Def < 0) npc_battle.Health -= player_battle.Atck + Bonus_Atck + (player_battle.Algo / 2);
+                npc_battle.Def -= playerCharacter.Atck + Bonus_Atck + (playerCharacter.Algo / 2);
+                if (npc_battle.Def < 0) npc_battle.Health -= playerCharacter.Atck + Bonus_Atck + (playerCharacter.Algo / 2);
             }
             else
             {
-                npc_battle.Health -= player_battle.Atck + Bonus_Atck + (player_battle.Algo / 2);
+                npc_battle.Health -= playerCharacter.Atck + Bonus_Atck + (playerCharacter.Algo / 2);
                 StartTransitionAnimation("NPC");
             }
-            npcisDefending = false;
+            isNpcDefending = false;
             ToggleTurn();
         }
-        private void Button2_Click(object sender, RoutedEventArgs e)
+        private void OnDefendButtonClick(object sender, RoutedEventArgs e)
         {
             if (!isPlayerTurn) return;
 
-            button2.SetImageSource("pack://application:,,,/Data/Button/Defens_1.png");
+            defendButton.SetImageSource("pack://application:,,,/Data/Button/Defens_1.png");
             Task.Delay(200).ContinueWith(t =>
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    button2.SetImageSource("pack://application:,,,/Data/Button/Defens.png");
+                    defendButton.SetImageSource("pack://application:,,,/Data/Button/Defens.png");
                 });
             });
 
             soundManager.PlayClickSound(gameEngine.GetSoundPath("klik.mp3"));
-            playerisDefending = true;
+            isPlayerDefending = true;
             ToggleTurn();
         }
-        private void Button3_Click(object sender, RoutedEventArgs e)
+        private void OnRunAwayButtonClick(object sender, RoutedEventArgs e)
         {
             if (!isPlayerTurn) return;
             soundManager.PlayClickSound(gameEngine.GetSoundPath("klik.mp3"));
 
-            button3.SetImageSource("pack://application:,,,/Data/Button/Run_away_1.png");
+            runAwayButton.SetImageSource("pack://application:,,,/Data/Button/Run_away_1.png");
             Task.Delay(200).ContinueWith(t =>
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    button3.SetImageSource("pack://application:,,,/Data/Button/Run_away.png");
+                    runAwayButton.SetImageSource("pack://application:,,,/Data/Button/Run_away.png");
                 });
             });
 
-            if (rand.NextDouble() < ((Running + Bonus_Run) / 100))
+            if (rand.NextDouble() < ((RunningChance + Bonus_Run) / 100))
             {
 
                 EndBattle();
@@ -214,29 +242,6 @@ namespace Walphor
             }
 
         }
-        
-        private string[] imagePaths = new string[]
-        {
-            "pack://application:,,,/Data/Battle/animation/F_1.png",
-            "pack://application:,,,/Data/Battle/animation/F_2.png",
-            "pack://application:,,,/Data/Battle/animation/F_3.png",
-            "pack://application:,,,/Data/Battle/animation/F_4.png",
-            "pack://application:,,,/Data/Battle/animation/F_5.png",
-            "pack://application:,,,/Data/Battle/animation/F_6.png",
-            "pack://application:,,,/Data/Battle/animation/F_7.png",
-            "pack://application:,,,/Data/Battle/animation/F_8.png"
-        };
-        private string[] imagePaths_def = new string[]
-        {
-            "pack://application:,,,/Data/Battle/animation_Def/FD_1.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_2.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_3.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_4.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_5.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_6.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_7.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_8.png"
-        };
         public void StartTransitionAnimation(string active)
         {
             if (!images.TryGetValue("animationImage", out Image animationImage))
@@ -301,9 +306,9 @@ namespace Walphor
             {
                 if (npc_battle != null)
                 {
-                    if (currentFrame < imagePaths.Length)
+                    if (currentFrame < attackAnimationPaths.Length)
                     {
-                        animationImage.Source = new BitmapImage(new Uri(imagePaths[currentFrame], UriKind.RelativeOrAbsolute));
+                        animationImage.Source = new BitmapImage(new Uri(attackAnimationPaths[currentFrame], UriKind.RelativeOrAbsolute));
                         currentFrame++;
                         if (active == "NPC")
                         {
@@ -320,14 +325,14 @@ namespace Walphor
                         }
                         else if (active == "PLAYER")
                         {
-                            if (player_battle.X <= 565 && curentPos <= 50)
+                            if (playerCharacter.X <= 565 && curentPos <= 50)
                             {
-                                player_battle.SetPosition((canvasBattle.Width / 2.0) - 75 - curentPos, (canvasBattle.Height / 2.0) - 50);
+                                playerCharacter.SetPosition((canvasBattle.Width / 2.0) - 75 - curentPos, (canvasBattle.Height / 2.0) - 50);
                                 curentPos += 10;
                             }
                             else
                             {
-                                player_battle.SetPosition((canvasBattle.Width / 2.0) - 175 + curentPos, (canvasBattle.Height / 2.0) - 50);
+                                playerCharacter.SetPosition((canvasBattle.Width / 2.0) - 175 + curentPos, (canvasBattle.Height / 2.0) - 50);
                                 curentPos += 10;
                             }
                         }
@@ -339,7 +344,7 @@ namespace Walphor
                         timer.Stop();
                         animationImage.Visibility = Visibility.Hidden;
                         currentFrame = 0;
-                        animationImage.Source = new BitmapImage(new Uri(imagePaths[currentFrame], UriKind.RelativeOrAbsolute));
+                        animationImage.Source = new BitmapImage(new Uri(attackAnimationPaths[currentFrame], UriKind.RelativeOrAbsolute));
                     }
                 }
             };
@@ -408,9 +413,9 @@ namespace Walphor
             {
                 if (npc_battle != null)
                 {
-                    if (currentFrame < imagePaths.Length)
+                    if (currentFrame < attackAnimationPaths.Length)
                     {
-                        animationImage.Source = new BitmapImage(new Uri(imagePaths_def[currentFrame], UriKind.RelativeOrAbsolute));
+                        animationImage.Source = new BitmapImage(new Uri(defendAnimationPaths[currentFrame], UriKind.RelativeOrAbsolute));
                         currentFrame++;
                         if (active == "NPC")
                         {
@@ -427,14 +432,14 @@ namespace Walphor
                         }
                         else if (active == "PLAYER")
                         {
-                            if (player_battle.X <= 565 && curentPos <= 50)
+                            if (playerCharacter.X <= 565 && curentPos <= 50)
                             {
-                                player_battle.SetPosition((canvasBattle.Width / 2.0) - 75 - curentPos, (canvasBattle.Height / 2.0) - 50);
+                                playerCharacter.SetPosition((canvasBattle.Width / 2.0) - 75 - curentPos, (canvasBattle.Height / 2.0) - 50);
                                 curentPos += 10;
                             }
                             else
                             {
-                                player_battle.SetPosition((canvasBattle.Width / 2.0) - 175 + curentPos, (canvasBattle.Height / 2.0) - 50);
+                                playerCharacter.SetPosition((canvasBattle.Width / 2.0) - 175 + curentPos, (canvasBattle.Height / 2.0) - 50);
                                 curentPos += 10;
                             }
                         }
@@ -446,7 +451,7 @@ namespace Walphor
                         timer.Stop();
                         animationImage.Visibility = Visibility.Hidden;
                         currentFrame = 0;
-                        animationImage.Source = new BitmapImage(new Uri(imagePaths_def[currentFrame], UriKind.RelativeOrAbsolute));
+                        animationImage.Source = new BitmapImage(new Uri(defendAnimationPaths[currentFrame], UriKind.RelativeOrAbsolute));
                     }
                 }
             };
@@ -482,24 +487,24 @@ namespace Walphor
                 switch (action)
                 {
                     case 0:
-                        if (playerisDefending && rand.NextDouble() < (Defing / 100))
+                        if (isPlayerDefending && rand.NextDouble() < (DefendingBonus / 100))
                         {
-                            player_battle.Def -= npc_battle.Atck;
+                            playerCharacter.Def -= npc_battle.Atck;
                             Debug.WriteLine("Оборона гравця успiшна!");
                             StartTransitionAnimation_Def("PLAYER");
-                            if (player_battle.Def < 0) player_battle.Health -= npc_battle.Atck;
+                            if (playerCharacter.Def < 0) playerCharacter.Health -= npc_battle.Atck;
                         }
                         else
                         {
                             Debug.WriteLine("НПС атакує!");
                             StartTransitionAnimation("PLAYER");
-                            player_battle.Health -= npc_battle.Atck + (npc_battle.Level * 3);
+                            playerCharacter.Health -= npc_battle.Atck + (npc_battle.Level * 3);
 
                         }
-                        playerisDefending = false;
+                        isPlayerDefending = false;
                         break;
                     case 1:
-                        npcisDefending = true;
+                        isNpcDefending = true;
                         Debug.WriteLine("оборона");
                         break;
                     case 2:
@@ -514,7 +519,7 @@ namespace Walphor
         private void UpdateHealthBar(double newHealth)
         {
             double maxWidth = 294;
-            double healthPercentage = newHealth / player_battle.MaxHealth;
+            double healthPercentage = newHealth / playerCharacter.MaxHealth;
 
             if (newHealth <= 0)
             { 
@@ -531,10 +536,10 @@ namespace Walphor
 
             if (newHealth <= 0)
             {
-                player_battle_org.Level += 1;
-                player_battle_org.Money += 10;
-                uiManager.UpdateMoney(player_battle_org.Money);
-                uiManager.UpdateLevel(player_battle_org.Level);
+                originalPlayerCharacter.Level += 1;
+                originalPlayerCharacter.Money += 10;
+                uiManager.UpdateMoney(originalPlayerCharacter.Money);
+                uiManager.UpdateLevel(originalPlayerCharacter.Level);
                 EndBattle();
             }
 
@@ -543,7 +548,7 @@ namespace Walphor
         private void UpdateDefBar(double newDef)
         {
             double maxWidth = 208;
-            double defPercentage = newDef / player_battle.MaxDef;
+            double defPercentage = newDef / playerCharacter.MaxDef;
 
             uiManager.UpdateRectangleWidth("DEF", maxWidth * defPercentage, maxWidth);
         }
@@ -557,7 +562,7 @@ namespace Walphor
         private void UpdateAlgoBar(double newAlgo)
         {
             double maxHeight = 272;
-            double algoPercentage = newAlgo / player_battle.MaxAlgo;
+            double algoPercentage = newAlgo / playerCharacter.MaxAlgo;
             uiManager.UpdateRectangleHeight("BIB", maxHeight * algoPercentage, maxHeight);
         }
         public void OnCardClicked(object sender, RoutedEventArgs e)
@@ -569,18 +574,18 @@ namespace Walphor
                 Card card = clickedImage.Tag as Card;
                 if (card != null && Character.Character_Cards.Contains(card))
                 {
-                    player_battle.Health += card.Health;
+                    playerCharacter.Health += card.Health;
                     Bonus_Atck += card.Atck;
 
                     if (card.Def > 0 && card.Def < 1)
                     {
                         Bonus_Def += (card.Def * 100);
                     }
-                    else player_battle.Def += card.Def;
+                    else playerCharacter.Def += card.Def;
 
                     Bonus_Run += card.Def;
 
-                    player_battle.Algo += card.Algo;
+                    playerCharacter.Algo += card.Algo;
 
                     Character.Character_Cards.Remove(card);
 
@@ -651,18 +656,18 @@ namespace Walphor
         }
         private void ClearNPCs()
         {
-            //if (player_battle != null)
+            //if (playerCharacter != null)
             //{
             //    // Вiдписка вiд подiй
-            //    player_battle.OnHealthChanged -= UpdateHealthBar;
-            //    player_battle.OnDefChanged -= UpdateDefBar;
+            //    playerCharacter.OnHealthChanged -= UpdateHealthBar;
+            //    playerCharacter.OnDefChanged -= UpdateDefBar;
 
 
             //    // Видалення з Canvas
-            //    if (canvasBattle.Children.Contains(player_battle.GetImage()))
-            //        canvasBattle.Children.Remove(player_battle.GetImage());
+            //    if (canvasBattle.Children.Contains(playerCharacter.GetImage()))
+            //        canvasBattle.Children.Remove(playerCharacter.GetImage());
 
-            //    player_battle = null;
+            //    playerCharacter = null;
             //}
             if (npc_battle != null)
             {
@@ -677,9 +682,9 @@ namespace Walphor
         }
         public void EndBattle()
         {
-            player_battle.Health = 100;
-            player_battle.Def = 100;
-            player_battle.Algo = 0;
+            playerCharacter.Health = 100;
+            playerCharacter.Def = 100;
+            playerCharacter.Algo = 0;
             
             ClearNPCs();
             Bonus_Atck = 0;
@@ -704,8 +709,8 @@ namespace Walphor
             turnTimer.Stop();
             gameEngine.ToggleCursorVisibility(false);
             ToggleTurn();
-            playerisDefending = false;
-            npcisDefending = false;
+            isPlayerDefending = false;
+            isNpcDefending = false;
             gameEngine.ApplysScene();
         }
         private void AddTextNextToButton(string text, double x, double y, double num, string text2, Canvas canvas)
@@ -773,21 +778,21 @@ namespace Walphor
         {
             if (inic == false)
             {
-                this.player_battle = (Character)player.Clone(canvasBattle, player.X, player.Y);
+                this.playerCharacter = (Character)player.Clone(canvasBattle, player.X, player.Y);
                 Debug.WriteLine("RRRRRRRRRRRRRRRRR222222222222");
                 inic = true;
             }
             npc_battle = (NPC)npc.Clone(canvasBattle, npc.X, npc.Y);
 
-            player_battle.SetPosition((canvasBattle.Width / 2.0) - 75, (canvasBattle.Height / 2.0) - 50);
+            playerCharacter.SetPosition((canvasBattle.Width / 2.0) - 75, (canvasBattle.Height / 2.0) - 50);
             npc_battle.SetPosition((canvasBattle.Width / 2.0) + 25, (canvasBattle.Height / 2.0) - 50);
 
             npc_battle.Health = 99;
             npc_battle.Def = 99;
 
-            player_battle.OnHealthChanged += UpdateHealthBar;
-            player_battle.OnDefChanged += UpdateDefBar;
-            player_battle.OnAlgoChanged += UpdateAlgoBar;
+            playerCharacter.OnHealthChanged += UpdateHealthBar;
+            playerCharacter.OnDefChanged += UpdateDefBar;
+            playerCharacter.OnAlgoChanged += UpdateAlgoBar;
             npc_battle.OnHealthChanged_NPC += UpdateHealthBar_NPC;
             npc_battle.OnDefChanged_NPC += UpdateDefBar_NPC;
 
@@ -795,8 +800,8 @@ namespace Walphor
             timeLeft = 15;
             turnTimer.Start();
 
-            player_battle.Health = 100;
-            player_battle.Def = 100;
+            playerCharacter.Health = 100;
+            playerCharacter.Def = 100;
 
 
 

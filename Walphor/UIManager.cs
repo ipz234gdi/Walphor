@@ -394,7 +394,7 @@ namespace Walphor
             Canvas.SetLeft(element, newX);
             Canvas.SetTop(element, newY);
         }
-        private string[] imagePaths = new string[]
+        private string[] attackAnimationPaths = new string[]
         {
             "pack://application:,,,/Data/Transition/1.png",
             "pack://application:,,,/Data/Transition/2.png",
@@ -429,11 +429,11 @@ namespace Walphor
             var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(0.05) };
             timer.Tick += async (sender, args) =>
             {
-                animationImage.Source = new BitmapImage(new Uri(imagePaths[currentFrame], UriKind.RelativeOrAbsolute));
+                animationImage.Source = new BitmapImage(new Uri(attackAnimationPaths[currentFrame], UriKind.RelativeOrAbsolute));
 
                 if (goingUp)
                 {
-                    if (currentFrame < imagePaths.Length - 1)
+                    if (currentFrame < attackAnimationPaths.Length - 1)
                         currentFrame++;
                     else
                     {

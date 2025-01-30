@@ -20,7 +20,7 @@ namespace Walphor
         private Canvas canvasFishing;
         private Grid gridGame;
         private UIManager uiManager;
-        private Character player_battle_org;
+        private Character originalPlayerCharacter;
         private GameEngine gameEngine;
         private bool isVisible;
         private Image exitButtonImage;
@@ -53,7 +53,7 @@ namespace Walphor
         public Fishing(Grid gridGame, Character character, UIManager uIManager, GameEngine gameEngine)
         {
             this.gridGame = gridGame;
-            this.player_battle_org = character;
+            this.originalPlayerCharacter = character;
             this.uiManager = uIManager;
             this.gameEngine = gameEngine;
             InitializeCanvas();
@@ -182,8 +182,8 @@ namespace Walphor
                 var caughtFish = possibleFishes[random.Next(possibleFishes.Count)];
                 resultTextBox.Text = $"Ви пiймали: {caughtFish.Name}\nВартiсть: {caughtFish.Cost}";
                 Debug.WriteLine(resultTextBox.Text);
-                player_battle_org.Money += caughtFish.Cost;
-                uiManager.UpdateMoney(player_battle_org.Money);
+                originalPlayerCharacter.Money += caughtFish.Cost;
+                uiManager.UpdateMoney(originalPlayerCharacter.Money);
             }
             else
             {
