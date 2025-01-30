@@ -84,29 +84,17 @@ namespace Walphor
             "pack://application:,,,/Data/Battle/animation_Def/FD_7.png",
             "pack://application:,,,/Data/Battle/animation_Def/FD_8.png"
         };
-        public Battle(Grid gridGame, Character character, NPC npc, UIManager uIManager, GameEngine gameEngine, Shop shop, SoundManager soundManager)
+        public Battle(Grid gridGame_, Character character_, NPC npc_, UIManager uIManager_, GameEngine gameEngine_, Shop shop_, SoundManager soundManager_)
         {
-            this.gridGame = gridGame;
-            this.originalPlayerCharacter = character;
-            playerCharacter = character;
-            this.npc_battle = npc;
-            this.gameEngine = gameEngine;
-            this.uiManager = uIManager;
-            this.shop = shop;
+            gridGame = gridGame_;
+            originalPlayerCharacter = character_;
+            playerCharacter = character_;
+            npc_battle = npc_;
+            gameEngine = gameEngine_;
+            uiManager = uIManager_;
+            shop = shop_;
+            soundManager = soundManager_;
 
-
-            InitializeBatle();
-            this.soundManager = soundManager;
-        }
-        private void SetupTurnTimer()
-        {
-            turnTimer = new DispatcherTimer();
-            turnTimer.Interval = TimeSpan.FromSeconds(1);
-            turnTimer.Tick += TurnTimer_Tick;
-        }
-
-        private void InitializeBatle()
-        {
             canvasBattle = new Canvas
             {
                 Name = "BattleCanvas",
@@ -115,59 +103,77 @@ namespace Walphor
                 Visibility = Visibility.Hidden
             };
 
-
             gridGame.Children.Add(canvasBattle);
-
             Panel.SetZIndex(canvasBattle, 1);
 
-            AddImage("pack://application:,,,/Data/Battle_background.png", 0, 0, 1280, 720);
+            InitializeBattle();
+            SetupTurnTimer();
+        }
+        private void SetupTurnTimer()
+        {
+            turnTimer = new DispatcherTimer();
+            turnTimer.Interval = TimeSpan.FromSeconds(1);
+            turnTimer.Tick += TurnTimer_Tick;
+        }
+        private void InitializeBattle()
+        {
+            AddBackgroundImage();
+            InitializeButtons();
+            InitializeCards();
+            InitializeStatusDisplays();
+        }
+        private void AddBackgroundImage()
+        {
+            AddImage("pack://application:,,,/Data/Battle_background.png", 0, 0, canvasBattle.Width, canvasBattle.Height);
+        }
+        private void InitializeButtons()
+        {
+            attackButton = CreateBattleButton(20, 480, "Attack", "pack://application:,,,/Data/Button/Attack.png", OnAttackButtonClick);
+            AddTextNextToButton("Attack", 234, 492, playerCharacter.Atck, "", canvasBattle);
 
-            attackButton = ButtonManager.Create(20, 480, 204, 68, "pack://application:,,,/Data/Button/Attack.png", canvasBattle);
-            attackButton.Tag = "Attack";
-            attackButton.Click += OnAttackButtonClick;
-            AddTextNextToButton("Attack", 20 + 204 + 10, 492, playerCharacter.Atck, "", canvasBattle);
+            defendButton = CreateBattleButton(20, 560, "Defend", "pack://application:,,,/Data/Button/Defens.png", OnDefendButtonClick);
+            AddTextNextToButton("Defend", 234, 572, DefendingBonus, "%", canvasBattle);
 
-            defendButton = ButtonManager.Create(20, 560, 204, 68, "pack://application:,,,/Data/Button/Defens.png", canvasBattle);
-            defendButton.Tag = "Defend";
-            defendButton.Click += OnDefendButtonClick;
-            AddTextNextToButton("Defend", 20 + 204 + 10, 572, DefendingBonus, "%", canvasBattle);
-
-            runAwayButton = ButtonManager.Create(20, 640, 204, 68, "pack://application:,,,/Data/Button/Run_away.png", canvasBattle);
-            runAwayButton.Tag = "Run_away";
-            runAwayButton.Click += OnRunAwayButtonClick;
-            AddTextNextToButton("Run", 20 + 204 + 10, 652, RunningChance, "%", canvasBattle);
-
-            AddImage("pack://application:,,,/Data/Cards/Demo_card.png", 600, 488, 128, 212);
-            AddImage("pack://application:,,,/Data/Cards/Demo_card.png", 740, 488, 128, 212);
-            AddImage("pack://application:,,,/Data/Cards/Demo_card.png", 880, 488, 128, 212);
-
-            timerDisplay = new TextBlock
+            runAwayButton = CreateBattleButton(20, 640, "RunAway", "pack://application:,,,/Data/Button/Run_away.png", OnRunAwayButtonClick);
+            AddTextNextToButton("Run", 234, 652, RunningChance, "%", canvasBattle);
+        }
+        private ButtonManager CreateBattleButton(double left, double top, string tag, string imagePath, RoutedEventHandler clickHandler)
+        {
+            var button = ButtonManager.Create(left, top, 204, 68, imagePath, canvasBattle);
+            button.Tag = tag;
+            button.Click += clickHandler;
+            return button;
+        }
+        private void InitializeCards()
+        {
+            double[] cardPositions = { 600, 740, 880 };
+            foreach (var position in cardPositions)
             {
-                FontSize = 24,
-                FontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Fonts/#F77 Minecraft"),
-                Foreground = new SolidColorBrush(Colors.White),
-                Text = "15",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Top
-            };
-            Canvas.SetTop(timerDisplay, 10);
-            Canvas.SetLeft(timerDisplay, (canvasBattle.Width / 2) - 16);
+                AddImage("pack://application:,,,/Data/Cards/Demo_card.png", position, 488, 128, 212);
+            }
+        }
+        private void InitializeStatusDisplays()
+        {
+            timerDisplay = CreateStatusTextBlock("15", (1280 / 2) - 16, 10);
             canvasBattle.Children.Add(timerDisplay);
 
-            turnDisplay = new TextBlock
+            turnDisplay = CreateStatusTextBlock("<     ", (1280 / 2) - 44, 10);
+            canvasBattle.Children.Add(turnDisplay);
+        }
+        private TextBlock CreateStatusTextBlock(string text, double left, double top)
+        {
+            var textBlock = new TextBlock
             {
                 FontSize = 24,
                 FontFamily = new FontFamily(new Uri("pack://application:,,,/"), "./Fonts/#F77 Minecraft"),
                 Foreground = Brushes.White,
-                Text = "<     ",
+                Text = text,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Top,
             };
-            Canvas.SetTop(turnDisplay, 10);
-            Canvas.SetLeft(turnDisplay, (canvasBattle.Width / 2) - 44);
-            canvasBattle.Children.Add(turnDisplay);
-
-            SetupTurnTimer();
+            Canvas.SetLeft(textBlock, left);
+            Canvas.SetTop(textBlock, top);
+            return textBlock;
         }
 
         private void OnAttackButtonClick(object sender, RoutedEventArgs e)
