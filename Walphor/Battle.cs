@@ -39,7 +39,7 @@ namespace Walphor
         private Character playerCharacter;
         private NPC npc_battle;
 
-        private Dictionary<string, Image> _images = new Dictionary<string, Image>();
+        private Dictionary<string, Image> images = new Dictionary<string, Image>();
         private List<TextBlock> bonusStatBlocks = new List<TextBlock>();
 
         private DispatcherTimer turnTimer;
@@ -47,8 +47,6 @@ namespace Walphor
         private bool isPlayerTurn = true;
         private bool isVisible = false;
         private bool inic = false;
-
-        private Dictionary<string, Image> images = new Dictionary<string, Image>();
 
         private const double RunningChance = 15;
         private const double DefendingBonus = 50;
@@ -248,113 +246,97 @@ namespace Walphor
             }
 
         }
-        public void StartTransitionAnimation(string active)
+        public void StartTransitionAnimation(string actor)
         {
-            if (!images.TryGetValue("animationImage", out Image animationImage))
+            if (!images.TryGetValue("animationImage", out var animationImage))
             {
-                animationImage = new Image
-                {
-                    Width = 200,
-                    Height = 100,
-                    Visibility = Visibility.Visible
-                };
-                if (active == "NPC")
-                {
-                    animationImage.RenderTransform = new ScaleTransform(-1, 1, animationImage.Width / 2, animationImage.Height / 2);
-                }
-                else if (active == "PLAYER")
-                {
-                    animationImage.RenderTransform = new ScaleTransform(0, 0, animationImage.Width / 2, animationImage.Height / 2);
-                }
-
+                animationImage = CreateAnimationImage(actor);
                 canvasBattle.Children.Add(animationImage);
-                Canvas.SetZIndex(animationImage, 10);
-                if (active == "NPC")
-                {
-                    Canvas.SetLeft(animationImage, (canvasBattle.Width / 2.0) - 75);
-                    Canvas.SetTop(animationImage, (canvasBattle.Height / 2.0) - 50);
-                }
-                else if (active == "PLAYER")
-                {
-                    Canvas.SetLeft(animationImage, (canvasBattle.Width / 2.0) - 125);
-                    Canvas.SetTop(animationImage, (canvasBattle.Height / 2.0) - 50);
-                }
-
                 images["animationImage"] = animationImage;
             }
             else
             {
-                if (active == "NPC")
-                {
-                    animationImage.RenderTransform = new ScaleTransform(-1, 1, animationImage.Width / 2, animationImage.Height / 2);
-                }
-                else if (active == "PLAYER")
-                {
-                    animationImage.RenderTransform = new ScaleTransform(1, 1, animationImage.Width / 2, animationImage.Height / 2);
-                }
-                if (active == "NPC")
-                {
-                    Canvas.SetLeft(animationImage, (canvasBattle.Width / 2.0) - 75);
-                    Canvas.SetTop(animationImage, (canvasBattle.Height / 2.0) - 50);
-                }
-                else if (active == "PLAYER")
-                {
-                    Canvas.SetLeft(animationImage, (canvasBattle.Width / 2.0) - 125);
-                    Canvas.SetTop(animationImage, (canvasBattle.Height / 2.0) - 50);
-                }
+                UpdateAnimationImageTransform(animationImage, actor);
                 animationImage.Visibility = Visibility.Visible;
             }
+
+            PlayAnimation(animationImage, actor);
+        }
+
+        private Image CreateAnimationImage(string actor)
+        {
+            var animationImage = new Image
+            {
+                Width = 200,
+                Height = 100,
+                Visibility = Visibility.Visible
+            };
+            UpdateAnimationImageTransform(animationImage, actor);
+            Canvas.SetZIndex(animationImage, 10);
+            return animationImage;
+        }
+
+        private void UpdateAnimationImageTransform(Image animationImage, string actor)
+        {
+            double scaleX = actor == "NPC" ? -1 : 1;
+            animationImage.RenderTransform = new ScaleTransform(scaleX, 1, animationImage.Width / 2, animationImage.Height / 2);
+
+            double left = (1280 / 2) + (actor == "NPC" ? -75 : -125);
+            Canvas.SetLeft(animationImage, left);
+            Canvas.SetTop(animationImage, (720 / 2) - 50);
+        }
+
+        private void PlayAnimation(Image animationImage, string actor)
+        {
             int currentFrame = 0;
-            int curentPos = 30;
-            var timer = new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromSeconds(0.05) };
-            timer.Start();
-            timer.Tick += async (sender, args) =>
+            int currentPosition = 30;
+            var animationPaths = attackAnimationPaths;
+
+            var animationTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(0.05) };
+            animationTimer.Tick += (s, e) =>
             {
                 if (npc_battle != null)
                 {
-                    if (currentFrame < attackAnimationPaths.Length)
+                    if (currentFrame < animationPaths.Length)
                     {
-                        animationImage.Source = new BitmapImage(new Uri(attackAnimationPaths[currentFrame], UriKind.RelativeOrAbsolute));
+                        animationImage.Source = new BitmapImage(new Uri(animationPaths[currentFrame]));
                         currentFrame++;
-                        if (active == "NPC")
-                        {
-                            if (npc_battle.X >= 665 && curentPos <= 50)
-                            {
-                                npc_battle.SetPosition((canvasBattle.Width / 2.0) + 25 + curentPos, (canvasBattle.Height / 2.0) - 50);
-                                curentPos += 10;
-                            }
-                            else
-                            {
-                                npc_battle.SetPosition((canvasBattle.Width / 2.0) + 125 - curentPos, (canvasBattle.Height / 2.0) - 50);
-                                curentPos += 10;
-                            }
-                        }
-                        else if (active == "PLAYER")
-                        {
-                            if (playerCharacter.X <= 565 && curentPos <= 50)
-                            {
-                                playerCharacter.SetPosition((canvasBattle.Width / 2.0) - 75 - curentPos, (canvasBattle.Height / 2.0) - 50);
-                                curentPos += 10;
-                            }
-                            else
-                            {
-                                playerCharacter.SetPosition((canvasBattle.Width / 2.0) - 175 + curentPos, (canvasBattle.Height / 2.0) - 50);
-                                curentPos += 10;
-                            }
-                        }
-
+                        MoveCharacterDuringAnimation(actor, ref currentPosition);
                     }
                     else
                     {
-
-                        timer.Stop();
+                        animationTimer.Stop();
                         animationImage.Visibility = Visibility.Hidden;
-                        currentFrame = 0;
-                        animationImage.Source = new BitmapImage(new Uri(attackAnimationPaths[currentFrame], UriKind.RelativeOrAbsolute));
                     }
                 }
             };
+            animationTimer.Start();
         }
+
+        private void MoveCharacterDuringAnimation(string actor, ref int currentPosition)
+        {
+            double step = 10;
+            double targetX = (canvasBattle.Width / 2.0);
+
+            switch (actor)
+            {
+                case "NPC":
+                    {
+                        targetX += (npc_battle.X >= 665 && currentPosition <= 50) ? 25 + currentPosition :  125 - currentPosition;
+                        npc_battle.SetPosition(targetX, (720 / 2.0) - 50);
+                        currentPosition += (int)step;
+                        break;
+                    }
+                case "PLAYER":
+                    {
+                        targetX += (playerCharacter.X <= 565 && currentPosition <= 50) ? -75 - currentPosition : -175 + currentPosition;
+                        playerCharacter.SetPosition(targetX, (720 / 2.0) - 50);
+                        currentPosition += (int)step;
+                        break;
+                    }
+            }
+        }
+
         public void StartTransitionAnimation_Def(string active)
         {
             if (!images.TryGetValue("animationImage", out Image animationImage))
