@@ -644,19 +644,6 @@ namespace Walphor
         }
         private void ClearNPCs()
         {
-            //if (playerCharacter != null)
-            //{
-            //    // Вiдписка вiд подiй
-            //    playerCharacter.OnHealthChanged -= UpdateHealthBar;
-            //    playerCharacter.OnDefChanged -= UpdateDefBar;
-
-
-            //    // Видалення з Canvas
-            //    if (canvasBattle.Children.Contains(playerCharacter.GetImage()))
-            //        canvasBattle.Children.Remove(playerCharacter.GetImage());
-
-            //    playerCharacter = null;
-            //}
             if (npc_battle != null)
             {
                 npc_battle.OnHealthChanged_NPC -= UpdateHealthBar_NPC;
