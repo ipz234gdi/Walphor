@@ -262,6 +262,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Battle.cs" />
+    <Compile Include="BattleAnimationPaths.cs" />
     <Compile Include="Card.cs" />
     <Compile Include="CollisionManager.cs" />
     <Compile Include="DialogManager.cs" />

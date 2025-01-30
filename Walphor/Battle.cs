@@ -215,28 +215,6 @@ namespace Walphor
 
         }
         
-        private string[] imagePaths = new string[]
-        {
-            "pack://application:,,,/Data/Battle/animation/F_1.png",
-            "pack://application:,,,/Data/Battle/animation/F_2.png",
-            "pack://application:,,,/Data/Battle/animation/F_3.png",
-            "pack://application:,,,/Data/Battle/animation/F_4.png",
-            "pack://application:,,,/Data/Battle/animation/F_5.png",
-            "pack://application:,,,/Data/Battle/animation/F_6.png",
-            "pack://application:,,,/Data/Battle/animation/F_7.png",
-            "pack://application:,,,/Data/Battle/animation/F_8.png"
-        };
-        private string[] imagePaths_def = new string[]
-        {
-            "pack://application:,,,/Data/Battle/animation_Def/FD_1.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_2.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_3.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_4.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_5.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_6.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_7.png",
-            "pack://application:,,,/Data/Battle/animation_Def/FD_8.png"
-        };
         public void StartTransitionAnimation(string active)
         {
             if (!images.TryGetValue("animationImage", out Image animationImage))
@@ -301,9 +279,9 @@ namespace Walphor
             {
                 if (npc_battle != null)
                 {
-                    if (currentFrame < imagePaths.Length)
+                    if (currentFrame < BattleAnimationPaths.AttackFrames.Length)
                     {
-                        animationImage.Source = new BitmapImage(new Uri(imagePaths[currentFrame], UriKind.RelativeOrAbsolute));
+                        animationImage.Source = new BitmapImage(new Uri(BattleAnimationPaths.AttackFrames[currentFrame], UriKind.RelativeOrAbsolute));
                         currentFrame++;
                         if (active == "NPC")
                         {
@@ -339,7 +317,7 @@ namespace Walphor
                         timer.Stop();
                         animationImage.Visibility = Visibility.Hidden;
                         currentFrame = 0;
-                        animationImage.Source = new BitmapImage(new Uri(imagePaths[currentFrame], UriKind.RelativeOrAbsolute));
+                        animationImage.Source = new BitmapImage(new Uri(BattleAnimationPaths.AttackFrames[currentFrame], UriKind.RelativeOrAbsolute));
                     }
                 }
             };
@@ -408,9 +386,9 @@ namespace Walphor
             {
                 if (npc_battle != null)
                 {
-                    if (currentFrame < imagePaths.Length)
+                    if (currentFrame < BattleAnimationPaths.AttackFrames.Length)
                     {
-                        animationImage.Source = new BitmapImage(new Uri(imagePaths_def[currentFrame], UriKind.RelativeOrAbsolute));
+                        animationImage.Source = new BitmapImage(new Uri(BattleAnimationPaths.DefenseFrames[currentFrame], UriKind.RelativeOrAbsolute));
                         currentFrame++;
                         if (active == "NPC")
                         {
@@ -446,7 +424,7 @@ namespace Walphor
                         timer.Stop();
                         animationImage.Visibility = Visibility.Hidden;
                         currentFrame = 0;
-                        animationImage.Source = new BitmapImage(new Uri(imagePaths_def[currentFrame], UriKind.RelativeOrAbsolute));
+                        animationImage.Source = new BitmapImage(new Uri(BattleAnimationPaths.DefenseFrames[currentFrame], UriKind.RelativeOrAbsolute));
                     }
                 }
             };
