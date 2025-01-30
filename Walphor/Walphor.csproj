@@ -265,6 +265,7 @@
     <Compile Include="Card.cs" />
     <Compile Include="CollisionManager.cs" />
     <Compile Include="DialogManager.cs" />
+    <Compile Include="DialogRepository.cs" />
     <Compile Include="Fishing.cs" />
     <Compile Include="ItemManager.cs" />
     <Compile Include="Menu.cs" />
