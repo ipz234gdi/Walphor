@@ -1,19 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Xml.Linq;
 
 namespace Walphor
 {
@@ -28,6 +18,14 @@ namespace Walphor
         private SoundManager soundManager;
         private UICreator uiCreator;
         private bool isVisible = true;
+
+        private const double MENU_WIDTH = 1280;
+        private const double MENU_HEIGHT = 720;
+        private const double BUTTON_OFFSET_X = -180;
+        private const double BUTTON_OFFSET_Y_START = -340;
+        private const double BUTTON_GAP = 65;
+        private const double BUTTON_CENTER_X = MENU_WIDTH / 2.0 + BUTTON_OFFSET_X;
+
         public Menu(Grid gridGame, Canvas canvasGame, GameEngine engine, UIManager uIManager, Character character, SoundManager soundManager)
         {
             this.gridGame = gridGame;
@@ -45,9 +43,8 @@ namespace Walphor
             canvasMenu = new Canvas
             {
                 Name = "MenuCanvas",
-                Width = 1280,
-                Height = 720,
-
+                Width = MENU_WIDTH,
+                Height = MENU_HEIGHT,
                 Visibility = Visibility.Visible,
             };
 
@@ -60,78 +57,23 @@ namespace Walphor
             Panel.SetZIndex(canvasMenu, 100);
             canvasMenu.RenderTransform = new TranslateTransform();
 
-            AddImage("pack://application:,,,/Data/Menu/Menu.png", (canvasMenu.Width / 2.0), (canvasMenu.Height / 2.0), 384, 512);
+            AddImage("pack://application:,,,/Data/Menu/Menu.png", MENU_WIDTH / 2.0, MENU_HEIGHT / 2.0, 384, 512);
 
-            AddButton(1280 / 2.0 - 180, 920 / 2.0 - 340, "Грати", canvasMenu, () =>
+            string[] buttonNames = { "Грати", "Збереження", "Профіль", "Правила гри", "Статистика", "Налаштування", "Вихiд" };
+            Action[] buttonActions = { StartGame, SaveGame, OpenProfile, OpenRules, OpenStats, OpenSettings, ExitGame };
+
+            for (int i = 0; i < buttonNames.Length; i++)
             {
-                ToggleVisibility();
-                engine.StartTimer();
-                uiCreator.taskBorder.Visibility = Visibility.Visible;
-                uiManager.MoveImage("Coin", 100, 20);
-                uiManager.ToggleBlurEffect(false);
-
-                uiManager.OpacityObject(uiCreator.levelTextBlock, 1);
-                uiManager.OpacityImage("Level", 1);
-                uiManager.OpacityObject(uiCreator.taskTextBlock, 1);
-
-                engine.inMenu = false;
-                engine.SaveCurrentGame();
-                engine.LoadGame(character.Name);
-                soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
-            });
-
-            AddButton(1280 / 2.0 - 180, 920 / 2.0 - 275, "Збереження", canvasMenu, () =>
-            {
-                engine.SaveCurrentGame();
-                soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
-            });
-
-            AddButton(1280 / 2.0 - 180, 920 / 2.0 - 210, "Профіль", canvasMenu, () =>
-            {
-                uiManager.UpdateStatistics(GameEngine.GetDatabasePath());
-                uiCreator.ProfileBorder.Visibility = Visibility.Visible;
-                uiCreator.ProfileButton.Visibility = Visibility.Visible;
-                ToggleVisibility();
-                engine.inMenu = false;
-                soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
-            });
-
-            AddButton(1280 / 2.0 - 180, 920 / 2.0 - 145, "Правила гри", canvasMenu, () =>
-            {
-                engine.inRules = true;
-                uiManager.ShowRulesMenu();
-                soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
-            });
-
-            AddButton(1280 / 2.0 - 180, 920 / 2.0 - 80, "Статистика", canvasMenu, () =>
-            {
-                uiManager.UpdateStatistics(GameEngine.GetDatabasePath());
-                uiManager.StatisticsVisible();
-                ToggleVisibility();
-                engine.inMenu = false;
-                soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
-            });
-
-            AddButton(1280 / 2.0 - 180, 920 / 2.0 - 10, "Налаштування", canvasMenu, () =>
-            {
-                engine.inSettings = true;
-                uiManager.ShowSettings();
-                soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
-            });
-
-            AddButton(1280 / 2.0 - 180, 920 / 2.0 + 55, "Вихiд", canvasMenu, () =>
-            {
-                soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
-                Application.Current.Shutdown();
-
-            });
-
+                AddButton(BUTTON_CENTER_X, MENU_HEIGHT / 2.0 + BUTTON_OFFSET_Y_START + i * BUTTON_GAP, buttonNames[i], canvasMenu, buttonActions[i]);
+            }
         }
+
         public void SetUIManager(UIManager uiManager, UICreator uiCreator)
         {
             this.uiManager = uiManager;
             this.uiCreator = uiCreator;
         }
+
         public void AddImage(string imagePath, double x, double y, double width, double height)
         {
             Image image = new Image();
@@ -146,6 +88,7 @@ namespace Walphor
             Canvas.SetTop(image, y - height / 2.0);
             canvasMenu.Children.Add(image);
         }
+
         private void AddButton(double x, double y, string name, Canvas canvas, Action action)
         {
             TextBlock infoTextBlock = new TextBlock
@@ -188,6 +131,7 @@ namespace Walphor
 
             infoTextBlock.MouseLeftButtonDown += (sender, e) => action?.Invoke();
         }
+
         public void ToggleVisibility()
         {
             var animation = new DoubleAnimation
@@ -214,13 +158,68 @@ namespace Walphor
                 animation.From = 1;
                 animation.To = 0;
                 animation.Completed += (s, e) => canvasMenu.Visibility = Visibility.Hidden;
-                
             }
 
             canvasMenu.BeginAnimation(Canvas.OpacityProperty, animation);
             isVisible = !isVisible;
-
         }
-        
+
+        private void StartGame()
+        {
+            ToggleVisibility();
+            engine.StartTimer();
+            uiCreator.taskBorder.Visibility = Visibility.Visible;
+            uiManager.MoveImage("Coin", 100, 20);
+            uiManager.ToggleBlurEffect(false);
+            engine.inMenu = false;
+            engine.SaveCurrentGame();
+            engine.LoadGame(character.Name);
+            soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
+        }
+
+        private void SaveGame()
+        {
+            engine.SaveCurrentGame();
+            soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
+        }
+
+        private void OpenProfile()
+        {
+            uiManager.UpdateStatistics(GameEngine.GetDatabasePath());
+            uiCreator.ProfileBorder.Visibility = Visibility.Visible;
+            uiCreator.ProfileButton.Visibility = Visibility.Visible;
+            ToggleVisibility();
+            engine.inMenu = false;
+            soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
+        }
+
+        private void OpenRules()
+        {
+            engine.inRules = true;
+            uiManager.ShowRulesMenu();
+            soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
+        }
+
+        private void OpenStats()
+        {
+            uiManager.UpdateStatistics(GameEngine.GetDatabasePath());
+            uiManager.StatisticsVisible();
+            ToggleVisibility();
+            engine.inMenu = false;
+            soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
+        }
+
+        private void OpenSettings()
+        {
+            engine.inSettings = true;
+            uiManager.ShowSettings();
+            soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
+        }
+
+        private void ExitGame()
+        {
+            soundManager.PlayClickSound(engine.GetSoundPath("klik.mp3"));
+            Application.Current.Shutdown();
+        }
     }
 }
