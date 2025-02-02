@@ -87,47 +87,20 @@ namespace Walphor
         }
         private void InitializeCards()
         {
+            var cardDataList = new List<(double X, double Y, string Name, double Def, double Atck, double Algo, double Health, double Cost, string Image, string Info)>
+            {
+                (466, 66, "Rom", 0.2, 2, 5, 10, 10, "pack://application:,,,/Data/Cards/Card_Rom.png", "Ром: помiрний захист i атака."),
+                (620, 66, "Tecila", 0.1, 8, 3, 12, 15, "pack://application:,,,/Data/Cards/Card_Tecila_1.png", "Текiла: висока атака, низький захист."),
+                (774, 66, "Dragon", 0.3, 3, 5, 8, 12, "pack://application:,,,/Data/Cards/Card_Dragon_1.png", "Дракон: високий захист, помiрна атака."),
+            };
 
-            Card card_1 = Card.Create(466, 66, 128, 212, "Rom", 0.2, 2, 5, 10, 10, "pack://application:,,,/Data/Cards/Card_Rom.png", canvasShop,
-        "Ром: помiрний захист i атака.");
-            card_1.image.MouseLeftButtonDown += OnCardClicked;
-
-            Card card_2 = Card.Create(620, 66, 128, 212, "Tecila", 0.1, 8, 3, 12, 15, "pack://application:,,,/Data/Cards/Card_Tecila_1.png", canvasShop,
-                "Текiла: висока атака, низький захист.");
-            card_2.image.MouseLeftButtonDown += OnCardClicked;
-
-            Card card_3 = Card.Create(774, 66, 128, 212, "Dragon", 0.3, 3, 5, 8, 12, "pack://application:,,,/Data/Cards/Card_Dragon_1.png", canvasShop,
-                "Дракон: високий захист, помiрна атака.");
-            card_3.image.MouseLeftButtonDown += OnCardClicked;
-
-            Card card_4 = Card.Create(928, 66, 128, 212, "Dvarf", 0.2, 5, 4, 11, 14, "pack://application:,,,/Data/Cards/Card_Dvarf_1.png", canvasShop,
-                "Дварф: збалансований захист i атака.");
-            card_4.image.MouseLeftButtonDown += OnCardClicked;
-
-            Card card_5 = Card.Create(1082, 66, 128, 212, "Elfi", 0.1, 6, 2, 13, 16, "pack://application:,,,/Data/Cards/Card_Elfi_1.png", canvasShop,
-                "Ельфи: високе здоров'я, помiрна атака.");
-            card_5.image.MouseLeftButtonDown += OnCardClicked;
-
-            Card card_6 = Card.Create(466, 368, 128, 212, "Elicir", 0.25, 4, 6, 9, 18, "pack://application:,,,/Data/Cards/Card_Elicir_1.png", canvasShop,
-                "Елiксир: високий захист, збалансованi бафи.");
-            card_6.image.MouseLeftButtonDown += OnCardClicked;
-
-            Card card_7 = Card.Create(620, 368, 128, 212, "Shadow", 0.2, 7, 3, 10, 20, "pack://application:,,,/Data/Cards/Card_Shadow_1.png", canvasShop,
-                "Тiнь: висока атака, помiрний захист.");
-            card_7.image.MouseLeftButtonDown += OnCardClicked;
-
-            Card card_8 = Card.Create(774, 368, 128, 212, "Night", 0.1, 4, 7, 11, 22, "pack://application:,,,/Data/Cards/Card_Night_1.png", canvasShop,
-                "Нiч: високий алгоритм, помiрне здоров'я.");
-            card_8.image.MouseLeftButtonDown += OnCardClicked;
-
-            Card card_9 = Card.Create(928, 368, 128, 212, "KrovavaiaMery", 0.15, 5, 6, 9, 24, "pack://application:,,,/Data/Cards/Card_KrovavaiaMery_1.png", canvasShop,
-                "Кривава Мерi: збалансованi характеристики, акцент на здоров'я.");
-            card_9.image.MouseLeftButtonDown += OnCardClicked;
-
-            Card card_10 = Card.Create(1082, 368, 128, 212, "Winter", 0.2, 3, 8, 10, 26, "pack://application:,,,/Data/Cards/Card_Winter_1.png", canvasShop,
-                "Зима: високий алгоритм, збалансований захист i атака.");
-            card_10.image.MouseLeftButtonDown += OnCardClicked;
+            foreach (var data in cardDataList)
+            {
+                Card card = Card.Create(data.X, data.Y, 128, 212, data.Name, data.Def, data.Atck, data.Algo, data.Health, data.Cost, data.Image, canvasShop, data.Info);
+                card.image.MouseLeftButtonDown += OnCardClicked;
+            }
         }
+
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
         {
             engine.ApplysScene();
